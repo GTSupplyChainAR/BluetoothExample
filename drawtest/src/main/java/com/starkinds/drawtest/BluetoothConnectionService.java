@@ -280,7 +280,7 @@ public class BluetoothConnectionService {
                     }
                     //Log.d(TAG, "InputStream: " + incomingMessage);
                 } catch (IOException e) {
-                    Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
+                    Log.e(TAG, "write: Error reading Input Stream111. " + e.getMessage() );
                     break;
                 }
             }

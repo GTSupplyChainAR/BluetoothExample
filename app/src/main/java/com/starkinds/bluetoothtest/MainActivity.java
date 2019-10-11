@@ -185,14 +185,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-/*        Button btnONOFF = (Button) findViewById(R.id.btnONOFF);
+        Button btnONOFF = (Button) findViewById(R.id.btnONOFF);
         btnEnableDisable_Discoverable = (Button) findViewById(R.id.btnDiscoverable_on_off);
         lvNewDevices = (ListView) findViewById(R.id.lvNewDevices);
         mBTDevices = new ArrayList<>();
 
         btnStartConnection = (Button) findViewById(R.id.btnStartConnection);
         btnSend = (Button) findViewById(R.id.btnSend);
-        etSend = (EditText) findViewById(R.id.editText);*/
+        etSend = (EditText) findViewById(R.id.editText);
 
         //Broadcasts when bond state changes (ie:pairing)
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-/*        lvNewDevices.setOnItemClickListener(MainActivity.this);
+        lvNewDevices.setOnItemClickListener(MainActivity.this);
 
 
 
@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 byte[] bytes = etSend.getText().toString().getBytes(Charset.defaultCharset());
                 mBluetoothConnection.write(bytes);
             }
-        });*/
+        });
 
     }
 
@@ -239,11 +239,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 Log.d(TAG, "Action was DOWN");
                 return true;
             case (MotionEvent.ACTION_MOVE):
-                Log.d(TAG, "Action was MOVE, " + "X: " + event.getRawX() + " Y: " + event.getRawY());
-                String coordinates = Float.toString(event.getRawX()) + "," + Float.toString(event.getRawY());
-                byte[] bytes = coordinates.getBytes(Charset.defaultCharset());
-                mBluetoothConnection.write(bytes);
-                return true;
+                float x_portion = event.getRawX()/1440;
+                float y_portion = (event.getRawY()-1950)/650;
+                Log.d(TAG, "Action was MOVE, " + "X: " + x_portion + " Y: " + y_portion);
+                String coordinates = Float.toString(x_portion) + "," + Float.toString(y_portion);
+                try {
+                    if(event.getRawY()>=1950&&event.getRawY()<=2600){
+                        byte[] bytes = coordinates.getBytes(Charset.defaultCharset());
+                        mBluetoothConnection.write(bytes);
+                        return true;
+                    }
+
+                }catch (Exception e){
+                    Log.e(TAG, e.getMessage());
+                }
+
             case (MotionEvent.ACTION_UP):
             Log.d(TAG, "Action was UP");
                 return true;
