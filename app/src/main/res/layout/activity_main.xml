@@ -47,34 +47,24 @@
         android:id="@+id/btnStartConnection"
         android:text="Start Connection"/>
 
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lvNewDevices"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="11dp"
-        android:hint="Enter Text Here" />
-
-    <Button
-        android:id="@+id/btnSend"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lvNewDevices"
-        android:layout_marginLeft="2dp"
-        android:layout_marginTop="11dp"
-        android:layout_toRightOf="@+id/editText"
-        android:text="SEND" />
-
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="1100px"
+        android:layout_height="550px"
         android:layout_below="@+id/lvNewDevices"
-        android:layout_marginTop="117dp"
+        android:layout_marginTop="40dp"
         android:adjustViewBounds="true"
         app:srcCompat="@drawable/map_realistic" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="250px"
+        android:layout_height="250px"
+        android:layout_below="@+id/lvNewDevices"
+        android:layout_marginTop="90dp"
+        android:layout_toRightOf="@+id/imageView"
+        android:layout_marginLeft="100px"
+        app:srcCompat="@drawable/circle" />
 
 
 </RelativeLayout>

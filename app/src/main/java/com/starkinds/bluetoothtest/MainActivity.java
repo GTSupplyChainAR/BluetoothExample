@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public DeviceListAdapter mDeviceListAdapter;
 
     ListView lvNewDevices;
+    private int centralX = 1325;
+    private int centralY = 1025;
 
 
     // Create a BroadcastReceiver for ACTION_FOUND
@@ -191,8 +193,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mBTDevices = new ArrayList<>();
 
         btnStartConnection = (Button) findViewById(R.id.btnStartConnection);
-        btnSend = (Button) findViewById(R.id.btnSend);
-        etSend = (EditText) findViewById(R.id.editText);
+/*        btnSend = (Button) findViewById(R.id.btnSend);
+        etSend = (EditText) findViewById(R.id.editText);*/
 
         //Broadcasts when bond state changes (ie:pairing)
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED);
@@ -202,7 +204,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         lvNewDevices.setOnItemClickListener(MainActivity.this);
 
-
+        centralX = 1325;
+        centralY = 1025;
 
         btnONOFF.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,13 +222,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
-        btnSend.setOnClickListener(new View.OnClickListener() {
+       /* btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 byte[] bytes = etSend.getText().toString().getBytes(Charset.defaultCharset());
                 mBluetoothConnection.write(bytes);
             }
-        });
+        });*/
 
     }
 
@@ -233,25 +236,83 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public boolean onTouchEvent(MotionEvent event) {
 
         int action = MotionEventCompat.getActionMasked(event);
-
+        int pointerCount = event.getPointerCount();
         switch (action) {
             case (MotionEvent.ACTION_DOWN):
                 Log.d(TAG, "Action was DOWN");
                 return true;
             case (MotionEvent.ACTION_MOVE):
-                float x_portion = event.getRawX()/1440;
-                float y_portion = (event.getRawY()-1950)/650;
-                Log.d(TAG, "Action was MOVE, " + "X: " + x_portion + " Y: " + y_portion);
-                String coordinates = Float.toString(x_portion) + "," + Float.toString(y_portion);
-                try {
-                    if(event.getRawY()>=1950&&event.getRawY()<=2600){
-                        byte[] bytes = coordinates.getBytes(Charset.defaultCharset());
-                        mBluetoothConnection.write(bytes);
-                        return true;
+                if(pointerCount==1){
+                    if(event.getRawX()>=0&&event.getRawX()<=1100&&event.getRawY()>=800&&event.getRawY()<=1350){
+                        //Map point
+                        float x_portion = event.getRawX()/1100;
+                        float y_portion = (event.getRawY()-800)/600;
+                        Log.d(TAG, "Action was MOVE, " + "X: " + event.getRawX() + " Y: " + event.getRawY());
+                        String coordinates = Float.toString(x_portion) + "," + Float.toString(y_portion);
+                        try {
+                                byte[] bytes = coordinates.getBytes(Charset.defaultCharset());
+                                mBluetoothConnection.write(bytes);
+                                return true;
+                        }catch (Exception e){
+                            Log.e(TAG, e.getMessage());
+                        }
+                    }
+                    else if(event.getRawX()>=1200&&event.getRawX()<=1450&&event.getRawY()>=900&&event.getRawY()<=1150){
+                        //Joystick point
+                        int angle = (int)getAngle(event.getRawX(),event.getRawY());
+                        angle =(angle+450)%360;
+                        Log.d(TAG, "Degree " + angle);
+                        String degree = Integer.toString(angle) + "," + Integer.toString(-1);
+                        try {
+                            byte[] bytes = degree.getBytes(Charset.defaultCharset());
+                            mBluetoothConnection.write(bytes);
+                            return true;
+                        }catch (Exception e){
+                            Log.e(TAG, e.getMessage());
+                        }
+                    }
+                }
+                else if(pointerCount==2){
+                    String data="";
+                    float x_portion = -1;
+                    float y_portion = -1;
+                    int angle = -1;
+                    if(event.getX(0)>=0&&event.getX(0)<=1100&&event.getY(0)>=800&&event.getY(0)<=1350) {
+                        x_portion = event.getX(0)/1100;
+                        y_portion = (event.getY(0)-800)/600;
+                    }
+                    else if (event.getX(0)>=1200&&event.getX(0)<=1450&&event.getY(0)>=900&&event.getY(0)<=1150){
+                        angle = (int)getAngle(event.getX(0),event.getY(0));
+                        angle =(angle+450)%360;
+                    }
+                    if(event.getX(1)>=0&&event.getX(1)<=1100&&event.getY(1)>=800&&event.getY(1)<=1350) {
+                        x_portion = event.getX(1)/1100;
+                        y_portion = (event.getY(1)-800)/600;
+                    }
+                    else if (event.getX(1)>=1200&&event.getX(1)<=1450&&event.getY(1)>=900&&event.getY(1)<=1150){
+                        angle = (int)getAngle(event.getX(1),event.getY(1));
+                        angle =(angle+450)%360;
                     }
 
-                }catch (Exception e){
-                    Log.e(TAG, e.getMessage());
+                    if(x_portion!=-1&&y_portion!=-1&&angle!=-1){
+                        data = Float.toString(x_portion) + "," + Float.toString(y_portion) + "," + Integer.toString(angle);
+                    }
+                    else if(x_portion!=-1&&y_portion!=-1){
+                        data = Float.toString(x_portion) + "," + Float.toString(y_portion);
+                    }
+                    else if(angle!=-1){
+                        data = Integer.toString(angle) + "," + Integer.toString(-1);
+                    }
+
+                    try {
+                        byte[] bytes = data.getBytes(Charset.defaultCharset());
+                        mBluetoothConnection.write(bytes);
+                        return true;
+                    }catch (Exception e){
+                        Log.e(TAG, e.getMessage());
+                    }
+
+
                 }
 
             case (MotionEvent.ACTION_UP):
@@ -267,6 +328,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     default:
             return super.onTouchEvent(event);
 }
+    }
+
+    public float getAngle(float x,float y) {
+        float angle = (float) Math.toDegrees(Math.atan2(y - centralY, x - centralX));
+
+        if(angle < 0){
+            angle += 360;
+        }
+
+        return angle;
     }
 
     //create method for starting connection
