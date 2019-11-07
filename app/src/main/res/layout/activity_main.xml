@@ -54,7 +54,7 @@
         android:layout_below="@+id/lvNewDevices"
         android:layout_marginTop="40dp"
         android:adjustViewBounds="true"
-        app:srcCompat="@drawable/map_realistic" />
+        app:srcCompat="@drawable/p1b0" />
 
     <ImageView
         android:id="@+id/imageView2"

@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.starkinds.bluetoothtest.BluetoothConnectionService;
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     Button btnSend;
 
     EditText etSend;
+
+    ImageView map;
 
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
@@ -191,6 +194,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         btnEnableDisable_Discoverable = (Button) findViewById(R.id.btnDiscoverable_on_off);
         lvNewDevices = (ListView) findViewById(R.id.lvNewDevices);
         mBTDevices = new ArrayList<>();
+        map = (ImageView) findViewById(R.id.imageView);
+        //map.setBackgroundResource(0);
+        //map.setBackgroundResource(R.drawable.map_realistic);
+        //map.setImageResource(R.drawable.map_realistic);
 
         btnStartConnection = (Button) findViewById(R.id.btnStartConnection);
 /*        btnSend = (Button) findViewById(R.id.btnSend);
@@ -428,6 +435,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         //first cancel discovery because its very memory intensive.
+
         mBluetoothAdapter.cancelDiscovery();
 
         Log.d(TAG, "onItemClick: You Clicked on a device.");
@@ -443,6 +451,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             mBTDevices.get(i).createBond();
 
             mBTDevice = mBTDevices.get(i);
+
             mBluetoothConnection = new BluetoothConnectionService(MainActivity.this);
+
+
+            mBluetoothConnection.map = map;
+            mBluetoothConnection.mainActivity = this;
     }
 }

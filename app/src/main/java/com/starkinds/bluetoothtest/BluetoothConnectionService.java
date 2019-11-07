@@ -1,12 +1,15 @@
 package com.starkinds.bluetoothtest;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.widget.ImageView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +40,9 @@ public class BluetoothConnectionService {
     ProgressDialog mProgressDialog;
 
     private ConnectedThread mConnectedThread;
+
+    public ImageView map;
+    public Activity mainActivity;
 
     public BluetoothConnectionService(Context context) {
         mContext = context;
@@ -245,7 +251,6 @@ public class BluetoothConnectionService {
 
         public void run(){
             byte[] buffer = new byte[1024];  // buffer store for the stream
-
             int bytes; // bytes returned from read()
 
             // Keep listening to the InputStream until an exception occurs
@@ -254,14 +259,58 @@ public class BluetoothConnectionService {
                 try {
                     bytes = mmInStream.read(buffer);
                     String incomingMessage = new String(buffer, 0, bytes);
-                    String delims = "[,]";
+                    Log.d(TAG, "Coming message: " + incomingMessage);
+                    final int currentBook = Integer.parseInt(incomingMessage);
+                    if(currentBook<=9){
+                        mainActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Log.d(TAG, "Into new Run");
+                                switch (currentBook){
+                                    case 0:
+                                        map.setImageResource(R.drawable.p1b0);
+                                        break;
+                                    case 1:
+                                        map.setImageResource(R.drawable.p1b1);
+                                        break;
+                                    case 2:
+                                        map.setImageResource(R.drawable.p1b2);
+                                        break;
+                                    case 3:
+                                        map.setImageResource(R.drawable.p1b3);
+                                        break;
+                                    case 4:
+                                        map.setImageResource(R.drawable.p1b4);
+                                        break;
+                                    case 5:
+                                        map.setImageResource(R.drawable.p1b5);
+                                        break;
+                                    case 6:
+                                        map.setImageResource(R.drawable.p1b6);
+                                        break;
+                                    case 7:
+                                        map.setImageResource(R.drawable.p1b7);
+                                        break;
+                                    case 8:
+                                        map.setImageResource(R.drawable.p1b8);
+                                        break;
+                                    case 9:
+                                        map.setImageResource(R.drawable.p1b9);
+                                        break;
+                                }
+
+                                //map.postInvalidate();
+                            }
+                        });
+                    }
+                   /* String delims = "[,]";
                     try{
                         String[] tokens = incomingMessage.split(delims);
                         Log.d(TAG, "Input coordinates is X :" + tokens[0] + " " + "Y: " + tokens[1]);
                     }catch (Exception e){
                         Log.e(TAG, "split error: " + e.getMessage() );
                     }
-                    //Log.d(TAG, "InputStream: " + incomingMessage);
+                    //Log.d(TAG, "InputStream: " + incomingMessage);*/
                 } catch (IOException e) {
                     Log.e(TAG, "write: Error reading Input Stream. " + e.getMessage() );
                     break;
